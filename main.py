@@ -1,12 +1,11 @@
 import pandas as pd
 import numpy as np
-import zipfile
+import csv
 import os
 
 class Municipio:
-    def __init__(self, nome, uf, codigo):
+    def __init__(self, nome, codigo):
         self.nome = nome
-        self.uf = uf
         self.codigo = codigo
 
 class Distancia:
@@ -38,21 +37,21 @@ def main():
             arquivos_pedidos.append(os.path.join("dados", nome_arquivo))
 
     # Ler municípios
-    municipios = pd.read_excel("dados/municipios.csv")
-    municipios = [Municipio(row["Município - UF"], row["COD mun"]) for _, row in municipios.iterrows()]
+    municipios = pd.read_csv("dados/municipios.csv", encoding="latin1")
+    municipios = [Municipio(row["Municipio - UF"], row["COD mun"]) for _, row in municipios.iterrows()]
 
     # Ler distâncias
-    distancias = pd.read_excel("dados/distancias.csv")
+    distancias = pd.read_csv("dados/distancias.csv", encoding="latin1")
     distancias = [Distancia(row["org"], row["dest"], row["km_linear"], row["km_rota"]) for _, row in distancias.iterrows()]
 
     # Ler hubs
-    hubs = pd.read_excel("dados/hubs.csv")
+    hubs = pd.read_csv("dados/hubs.csv", encoding="latin1")
     hubs = [Hub(row["Nome HUB"], row["COD inicial"], row["COD final"], row["Capacidade Entrega"]) for _, row in hubs.iterrows()]
 
     # Processar cada arquivo de pedidos individualmente
     for arquivo_pedidos in arquivos_pedidos:
         # Ler pedidos do arquivo
-        pedidos = pd.read_excel(arquivo_pedidos, engine='openpyxl')
+        pedidos = pd.read_csv(arquivo_pedidos,  encoding="latin1")
         pedidos = [Pedido(row["Id Pedido"], row["COD org"], row["COD dest"]) for _, row in pedidos.iterrows()]
 
         # Processar cada hub
@@ -103,4 +102,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-           
